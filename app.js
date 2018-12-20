@@ -14,19 +14,50 @@
     const rocketHeight = 80;
     const rocketWidth = 20;
     const rocketX = 70;
-    const aix = 910;
+    const opponentX = 910;
     let rocketY = 200;
-    let aiy = 200;
+    let opponentY = 200;
 
     const lineWidth = 5;
     const lineHeight = 15;
 
     let speedX = 1;
     let speedY = 1;
+
+    const topCanvas = canv.offsetTop;
+
+    // przyspieszenie po kontakcie ze śnianą lub rakietką
+    function speedUp () {
+        if (speedX > 0 && speedX < 16) {
+            speedX += 0.2;
+        }
+        else if (speedX < 0 && speedX > -16) {
+            speedX -= 1;
+        }
+
+        if (speedY > 0 && speedY < 16) {
+            speedY += 0.4;
+        }
+        else if (speedY < 0 && speedY > -16) {
+            speedY -= 1;
+        }
+    }
+
+    // ruch rakietki gracza
+    canv.addEventListener("mousemove", function(event){
+        rocketY = event.clientY - topCanvas - rocketHeight / 2;
+
+        if (rocketY >= ch - rocketHeight){
+            rocketY = ch - rocketHeight
+        }
+        if (rocketY <= 0){
+            rocketY = 0
+        }
+    });
     
     function opponent() {
         ctx.fillStyle = "white";
-        ctx.fillRect(aix, aiy , rocketWidth, rocketHeight);
+        ctx.fillRect(opponentX, opponentY , rocketWidth, rocketHeight);
     }
 
     function rocket() {
@@ -37,8 +68,18 @@
     function ball() {
         ctx.fillStyle = "white";
         ctx.fillRect(ballX, ballY , ballSize, ballSize);
+
         ballX += speedX;
         ballY += speedY;
+
+        if (ballY <= 0 || ballY + ballSize >= ch){
+            speedY = - speedY;
+            speedUp();
+        }
+
+        if (ballX <= 0 || ballX + ballSize >= cw){
+            speedX = - speedX
+        }
     }
 
     function table() {
