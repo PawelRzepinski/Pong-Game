@@ -31,15 +31,50 @@
         if (speedX > 0 && speedX < 16) {
             speedX += 0.2;
         }
+
         else if (speedX < 0 && speedX > -16) {
-            speedX -= 1;
+            speedX -= 0.5;
         }
 
         if (speedY > 0 && speedY < 16) {
-            speedY += 0.4;
+            speedY += 0.2;
         }
+
         else if (speedY < 0 && speedY > -16) {
-            speedY -= 1;
+            speedY -= 0.5;
+        }
+    }
+
+    function opponentMove() {
+        const rocketCenter = opponentY + rocketHeight / 2;
+        const ballCenter = ballY + ballSize / 2;
+
+        if (ballX > 500) {
+            if(rocketCenter - ballCenter > 200) {
+                opponentY -= 30;
+            }
+
+            else if(rocketCenter - ballCenter > 50){
+                opponentY -= 15;
+            }
+
+            if(rocketCenter - ballCenter < -200) {
+                opponentY += 30
+            }
+
+            else if(rocketCenter - ballCenter < -50){
+                opponentY += 15
+            }
+        }
+
+        else if (ballX <= 500 && ballX > 150) {
+            if (rocketCenter - ballCenter > 100) {
+                opponentY -= 3
+            }
+
+            else if (rocketCenter - ballCenter < -100){
+                opponentY += 3
+            }
         }
     }
 
@@ -96,7 +131,7 @@
         ball();
         rocket();
         opponent();
+        opponentMove();
     }
 
-    const intervel = setInterval(game, 1000 / 60);
-
+setInterval(game, 1000 / 60)
