@@ -14,8 +14,9 @@
     const rocketHeight = 80;
     const rocketWidth = 20;
     const rocketX = 70;
-    const opponentX = 910;
     let rocketY = 200;
+
+    const opponentX = 910;
     let opponentY = 200;
 
     const lineWidth = 5;
@@ -118,8 +119,10 @@
     }
 
     function table() {
+
         ctx.fillStyle = "darkgreen";
         ctx.fillRect(0, 0, cw, ch);
+
         for (let i=20; i<ch; i+=30){
             ctx.fillStyle = "white";
             ctx.fillRect(cw/2 - lineWidth / 2, i, lineWidth, lineHeight)
