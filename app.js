@@ -1,140 +1,74 @@
-    const canv = document.querySelector("canvas");
-    const ctx = canv.getContext("2d");
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
 
-    canv.width = 1000;
-    canv.height = 500;
+canvas.width = 1000;
+canvas.height = 500;
+let gameWidth = canvas.width;
 
-    const cw = canv.width;
-    const ch = canv.height;
+/*const ballsMove = ballsGame => {
+    ballsGame.forEach(ballsGame =>{
+        ballsGame.move(collisionObject)
+    })
+};*/
 
-    const ballSize = 20;
-    let ballX = cw/2 - ballSize/2;
-    let ballY = ch/2-ballSize/2;
+const updateGameWindow = () => {
+    gameWidth = canvas.width;
+    computerPaddel.positionX = canvas.width - 30;
+};
 
-    const rocketHeight = 80;
-    const rocketWidth = 20;
-    const rocketX = 70;
-    let rocketY = 200;
+const clearScreen = () => {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,canvas.width, canvas.height)
+};
 
-    const opponentX = 910;
-    let opponentY = 200;
+function Paddel(width, height, color, positionX, positionY) {
+    this.width = width;
+    this.height = height;
+    this.color = color;
+    this.positionX = positionX;
+    this.positionY = positionY;
+    this.speed = 3;
+    this.middleHeight = height / 2;
+}
 
-    const lineWidth = 5;
-    const lineHeight = 15;
+function Ball(size, color, positionX, positionY) {
+    this.width = size;
+    this.height = size;
+    this.color = color;
+    this.positionX = positionX;
+    this.positionY = positionY;
+    this.middleHeight = size / 2;
+    this.speedX = 2;
+    this.speedY = 2;
+    this.directionX = true; // true = w prawo
+    this.directionY = true; // true = w dół
+}
 
-    let speedX = 1;
-    let speedY = 1;
-
-    const topCanvas = canv.offsetTop;
-
-    // przyspieszenie po kontakcie ze śnianą lub rakietką
-    function speedUp () {
-        if (speedX > 0 && speedX < 16) {
-            speedX += 0.2;
-        }
-
-        else if (speedX < 0 && speedX > -16) {
-            speedX -= 0.5;
-        }
-
-        if (speedY > 0 && speedY < 16) {
-            speedY += 0.2;
-        }
-
-        else if (speedY < 0 && speedY > -16) {
-            speedY -= 0.5;
-        }
-    }
-
-    function opponentMove() {
-        const rocketCenter = opponentY + rocketHeight / 2;
-        const ballCenter = ballY + ballSize / 2;
-
-        if (ballX > 500) {
-            if(rocketCenter - ballCenter > 200) {
-                opponentY -= 30;
-            }
-
-            else if(rocketCenter - ballCenter > 50){
-                opponentY -= 15;
-            }
-
-            if(rocketCenter - ballCenter < -200) {
-                opponentY += 30
-            }
-
-            else if(rocketCenter - ballCenter < -50){
-                opponentY += 15
-            }
-        }
-
-        else if (ballX <= 500 && ballX > 150) {
-            if (rocketCenter - ballCenter > 100) {
-                opponentY -= 3
-            }
-
-            else if (rocketCenter - ballCenter < -100){
-                opponentY += 3
-            }
-        }
-    }
-
-    // ruch rakietki gracza
-    canv.addEventListener("mousemove", function(event){
-        rocketY = event.clientY - topCanvas - rocketHeight / 2;
-
-        if (rocketY >= ch - rocketHeight){
-            rocketY = ch - rocketHeight
-        }
-        if (rocketY <= 0){
-            rocketY = 0
-        }
+//nie do końca rozumiem co sie tu zadziało
+const print = (collisionObject, context) => {
+    collisionObject.forEach(collisionObject => {
+        context.fillStyle = collisionObject.color;
+        context.fillRect(collisionObject.positionX, collisionObject.positionY, collisionObject.width, collisionObject.height)
     });
-    
-    function opponent() {
-        ctx.fillStyle = "white";
-        ctx.fillRect(opponentX, opponentY , rocketWidth, rocketHeight);
-    }
+};
 
-    function rocket() {
-        ctx.fillStyle = "white";
-        ctx.fillRect(rocketX, rocketY , rocketWidth, rocketHeight);
-    }
+const collisionObject = [];
+const ballsGame = [];
 
-    function ball() {
-        ctx.fillStyle = "white";
-        ctx.fillRect(ballX, ballY , ballSize, ballSize);
+const playerPaddel = new Paddel(20, 120, "orange", 10, canvas.height / 2 - 60);
+const computerPaddel = new Paddel(20, 120, "red", canvas.width - 30, canvas.height / 2 - 60);
+const ball1 = new Ball(20, "blue", canvas.width / 2 - 10, canvas.height / 2 - 10);
 
-        ballX += speedX;
-        ballY += speedY;
+collisionObject.push(playerPaddel, computerPaddel, ball1);
+ballsGame.push(ball1);
 
-        if (ballY <= 0 || ballY + ballSize >= ch){
-            speedY = - speedY;
-            speedUp();
-        }
 
-        if (ballX <= 0 || ballX + ballSize >= cw){
-            speedX = - speedX
-        }
-    }
+const game = () => {
+    if (gameWidth !== canvas.width)
+        updateGameWindow();
+    clearScreen();
+    //ballsMove(ballsGame);
+    print(collisionObject, ctx)
+};
 
-    function table() {
-
-        ctx.fillStyle = "darkgreen";
-        ctx.fillRect(0, 0, cw, ch);
-
-        for (let i=20; i<ch; i+=30){
-            ctx.fillStyle = "white";
-            ctx.fillRect(cw/2 - lineWidth / 2, i, lineWidth, lineHeight)
-        }
-    }
-
-    function game() {
-        table();
-        ball();
-        rocket();
-        opponent();
-        opponentMove();
-    }
-
-setInterval(game, 1000 / 60)
+let interval = setInterval(game, 1000/60);
